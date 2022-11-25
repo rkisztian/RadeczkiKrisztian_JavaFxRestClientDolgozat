@@ -10,7 +10,7 @@ import static javafx.application.Application.launch;
 
 public class CarApp {
 
-    public static final String BASE_URL = "https://retoolapi.dev/omWoZF/busData";
+    public static final String BASE_URL = "";
 
     @Override
     public void start(Stage stage) throws IOException {

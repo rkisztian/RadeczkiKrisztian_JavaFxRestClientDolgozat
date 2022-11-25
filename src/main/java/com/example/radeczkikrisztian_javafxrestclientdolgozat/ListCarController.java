@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Stack;
 
+import static sun.security.ssl.SSLLogger.warning;
+
 public class ListCarController {
 
     private Button insertButton;
@@ -28,10 +30,10 @@ public class ListCarController {
 
     @FXML
     private void initialize(){
-        idCol.setCellFactory(new PropertyValueFactory<>("id"));
-        carnameCol.setCellFactory(new PropertyValueFactory<>("carname"));
-        ownerCol.setCellFactory(new PropertyValueFactory<>("owner"));
-        carageCol.setCellFactory(new PropertyValueFactory<>("carage"));
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+        carnameCol.setCellValueFactory(new PropertyValueFactory<>("carname"));
+        ownerCol.setCellValueFactory(new PropertyValueFactory<>("owner"));
+        carageCol.setCellValueFactory(new PropertyValueFactory<>("carage"));
         Platform.runLater(() -> {
             try {
                 loadPeopleFromServer();
@@ -46,10 +48,10 @@ public class ListCarController {
         Response response = RequestHandler.get(CarApp.BASE_URL);
         String content = response.getContent();
         Gson converter = new Gson();
-        Bus[] buses = converter.fromJson(content, Bus[].class);
-        busTable.getItems().clear();
-        for (Bus person : buses) {
-            busTable.getItems().add(person);
+        Car[] buses = converter.fromJson(content, Car[].class);
+        carTable.getItems().clear();
+        for (Car person : buses) {
+            carTable.getItems().add(person);
         }
     }
 
@@ -77,4 +79,33 @@ public class ListCarController {
             e.getMessage();
         }
     }
+
+    @FXML
+    public void updateClick(ActionEvent actionEvent) {
+        Car selected = carTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            warning("Módosításhoz előbb válasszon ki egy elemet!");
+            return;
+        }
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(CarApp.class.getResource("update-person-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), 640, 480);
+            UpdateCarController controller = fxmlLoader.getController();
+            controller.setCar(selected);
+            Stage stage = new Stage();
+            stage.setTitle("Update "+ selected.getCarname());
+            stage.setScene(scene);
+            stage.setOnHidden(event -> {
+                try {
+                    loadPeopleFromServer();
+                } catch (IOException e) {
+                    error("Nem sikerült kapcsolódni a szerverhez");
+                }
+            });
+            stage.show();
+        } catch (IOException e) {
+            error("Hiba történt az űrlap betöltése során", e.getMessage());
+        }
+    }
+
 }
