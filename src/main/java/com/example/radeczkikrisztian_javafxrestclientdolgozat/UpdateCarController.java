@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 
-public class UpdateCarController {
+public class UpdateCarController extends Controller{
 
     @FXML
     private TextField carnameField;

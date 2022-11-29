@@ -11,7 +11,7 @@
 
 
 <GridPane hgap="20.0" prefHeight="480.0" prefWidth="640.0" vgap="20.0" xmlns="http://javafx.com/javafx/null"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.radeczkikrisztian_javafxrestclientdolgozat.CreateCarController">
     <columnConstraints>
         <ColumnConstraints halignment="RIGHT" minWidth="75.0" prefWidth="100.0"/>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>

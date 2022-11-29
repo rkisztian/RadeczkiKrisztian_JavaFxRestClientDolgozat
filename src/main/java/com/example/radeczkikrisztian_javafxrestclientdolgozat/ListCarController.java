@@ -6,27 +6,36 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Stack;
 
-import static sun.security.ssl.SSLLogger.warning;
 
-public class ListCarController {
 
+public class ListCarController extends Controller {
+
+    @FXML
     private Button insertButton;
+    @FXML
     private Button updateButton;
+    @FXML
     private Button deleteButton;
+    @FXML
     private TableView<Car> carTable;
+
+    @FXML
     private TableColumn<Car, Integer> idCol;
+    @FXML
     private TableColumn<Car, String> carnameCol;
+    @FXML
     private TableColumn<Car, String> ownerCol;
+    @FXML
     private TableColumn<Car, Integer> carageCol;
+
 
     @FXML
     private void initialize(){
@@ -107,5 +116,30 @@ public class ListCarController {
             error("Hiba történt az űrlap betöltése során", e.getMessage());
         }
     }
+    @FXML
+    public void deleteClick(ActionEvent actionEvent) {
+        Car selected = carTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            warning("Törléshez előbb válasszon ki egy elemet!");
+            return;
+        }
 
+        Optional<ButtonType> optionalButtonType =
+                alert(Alert.AlertType.CONFIRMATION, "Biztos?",
+                        "Biztos, hogy törölni szeretné az alábbi rekordot: "
+                                + selected.getCarname(),
+                        "");
+        if (optionalButtonType.isPresent() &&
+                optionalButtonType.get().equals(ButtonType.OK)
+        ) {
+            String url = CarApp.BASE_URL + "/" + selected.getId();
+            try {
+                RequestHandler.delete(url);
+                loadPeopleFromServer();
+            } catch (IOException e) {
+                error("Nem sikerült kapcsolódni a szerverhez");
+            }
+        }
+    }
 }
+
